@@ -1,7 +1,23 @@
-import {API_TOKEN_INSTANCE, API_URL, ID_INSTANCE} from "../config.ts";
+import {API_URL} from "../config.ts";
+import type {Credentials} from "../types/types.ts";
 
-export const handleCheckAccount = async (phoneNumber: number) => {
-  const response = await fetch(`${API_URL}/waInstance${ID_INSTANCE}/checkAccount/${API_TOKEN_INSTANCE}`, {
+const BASE_URL = `${API_URL}/waInstance`;
+
+export const handeGetStateInstance = async (c: Credentials) => {
+  const response = await fetch(`${BASE_URL}${c.idInstance}/getStateInstance/${c.apiTokenInstance}`, {
+    method: 'GET',
+    headers: {'Content-Type': 'application/json'},
+  });
+  if (!response.ok) {
+    throw new Error(`Ошибка запроса: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
+
+
+export const handleCheckAccount = async (c: Credentials, phoneNumber: number) => {
+  const response = await fetch(`${BASE_URL}${c.idInstance}/checkAccount/${c.apiTokenInstance}`, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({phoneNumber}),
@@ -13,8 +29,8 @@ export const handleCheckAccount = async (phoneNumber: number) => {
   return data;
 };
 
-export const handleSendMessage = async (chatId: string, message: string) => {
-  const responce = await fetch(`${API_URL}/waInstance${ID_INSTANCE}/sendMessage/${API_TOKEN_INSTANCE}`, {
+export const handleSendMessage = async (c: Credentials, chatId: string, message: string) => {
+  const responce = await fetch(`${BASE_URL}${c.idInstance}/sendMessage/${c.apiTokenInstance}`, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({chatId, message}),
