@@ -1,7 +1,7 @@
 import {useState} from "react";
 import type {Credentials} from "../types/types.ts";
 import * as React from "react";
-import {handeGetStateInstance} from "../api/api.ts";
+import {GetStateInstance} from "../api/api.ts";
 
 interface ILoginFormProps {
   onLogin: (credentials: Credentials) => void;
@@ -23,7 +23,7 @@ const LoginForm = ({onLogin}: ILoginFormProps) => {
       apiTokenInstance: apiTokenInstance.trim()
     };
     try {
-      const data = await handeGetStateInstance(credentials);
+      const data = await GetStateInstance(credentials);
       console.log(data);
       if (data.stateInstance !== 'authorized') {
         setError(`Инстанс не авторизован (Статус: ${data.stateInstance})`);

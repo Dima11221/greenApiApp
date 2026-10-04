@@ -1,7 +1,8 @@
 import {useState} from "react";
 import * as React from "react";
-import {handleCheckAccount, handleSendMessage} from "../api/api.ts";
+import {CheckAccount} from "../api/api.ts";
 import type {Credentials} from "../types/types.ts";
+import ChatWindow from "./ChatWindow.tsx";
 
 
 interface IChatProps {
@@ -23,17 +24,13 @@ const Chat = ({credentials}: IChatProps) => {
   const [phone, setPhone] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<string | null>(null);
-  const [messageResult, setMessageResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string>('');
   const [chatId, setChatId] = useState<string>('');
 
   const handleSubmitNumber = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setResult(null);
     setChatId('');
-    setMessageResult(null);
-    setMessage('');
     setError(null);
 
     const value = normalizePhone(phone);
@@ -44,10 +41,15 @@ const Chat = ({credentials}: IChatProps) => {
     }
     setLoading(true);
     try {
-      const data = await handleCheckAccount(credentials, Number(value));
-      setResult(data?.exist ? "Номер есть в MAX" : "Номера нет в MAX");
-      console.log(data);
-      setChatId(data?.chatId || '');
+
+      //!!!
+      // const data = await CheckAccount(credentials, Number(value));
+      // setResult(data?.exist ? "Номер есть в MAX" : "Номера нет в MAX");
+      // setChatId(data?.chatId || '');
+
+      setChatId('220726370');
+
+
       setLoading(false);
     } catch (e) {
       console.error(e);
@@ -57,23 +59,6 @@ const Chat = ({credentials}: IChatProps) => {
     }
   };
 
-  const handleSubmitMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const text = message.trim();
-    if (!text) {
-      return;
-    }
-    setMessageResult(null);
-    try {
-      const data = await handleSendMessage(credentials, chatId, text);
-      setMessageResult(data?.idMessage ? 'Сообщение отправлено' : 'Ошибка при отправке сообщения');
-      setMessage('');
-      console.log(data);
-    } catch (e) {
-      console.error(e);
-      setMessageResult('Ошибка при отправке сообщения');
-    }
-  };
 
   return (
     <>
@@ -100,31 +85,9 @@ const Chat = ({credentials}: IChatProps) => {
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
         {result && <p>{result}</p>}
-        {
-          chatId && (
-            <section>
-              <div>
-                <h1>Окно отправки сообщения</h1>
-                <form onSubmit={handleSubmitMessage}>
-                  <p>
-                    <label htmlFor="text">Введите текст сообщения</label>
-                    <input
-                      type="text"
-                      name="text"
-                      id="text"
-                      value={message}
-                      placeholder="Привет"
-                      required
-                      onChange={(e) => setMessage(e.target.value)}
-                    />
-                  </p>
-                  <button type="submit">Отправить сообщение</button>
-                </form>
-              </div>
-              {messageResult && <p>{messageResult}</p>}
-            </section>
-          )
-        }
+
+        {chatId && <ChatWindow chatId={chatId} credentials={credentials} />}
+
       </section>
     </>
   )
