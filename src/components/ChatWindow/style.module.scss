@@ -5,7 +5,6 @@ $time-in: #9aa0a6;
 $blue: #0a7cff;
 
 .chat {
-  height: 100vh;
   max-width: 580px;
   width: 100%;
   display: flex;
@@ -72,7 +71,7 @@ $blue: #0a7cff;
   align-items: center;
   gap: 8px;
   max-width: 580px;
-  margin: 0 auto 16px;
+  margin: 16px auto 16px;
   padding: 0 16px;
   width: calc(100% - 32px);
   height: 52px;

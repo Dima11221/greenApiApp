@@ -1,5 +1,5 @@
 import {API_URL} from "../config.ts";
-import type {ChatHistory, Credentials} from "../types/types.ts";
+import type {ChatHistory, Credentials, ReceiveNotificationItem} from "../types/types.ts";
 
 const BASE_URL = `${API_URL}/waInstance`;
 
@@ -54,3 +54,26 @@ export const SendMessage = async (c: Credentials, chatId: string, message: strin
   const data = await response.json();
   return data;
 };
+
+export const ReceiveNotification = async (c: Credentials, signal?: AbortSignal): Promise<ReceiveNotificationItem | null> => {
+  const response = await fetch(`${BASE_URL}${c.idInstance}/receiveNotification/${c.apiTokenInstance}`, {
+    method: 'GET',
+    signal,
+  });
+  if (!response.ok) {
+    throw new Error(`Ошибка запроса: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
+
+export const DeleteNotification = async (c: Credentials, receiptId: number) => {
+  const response = await fetch(`${BASE_URL}${c.idInstance}/deleteNotification/${c.apiTokenInstance}/${receiptId}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error(`Ошибка запроса: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}

@@ -26,3 +26,25 @@ export interface ChatMessage {
   own: boolean,
   timestamp: number,
 }
+
+export interface ReceiveNotificationItem {
+  receiptId: number,
+  body: {
+    typeWebhook: string,
+    timestamp?: number,
+    idMessage?: string,
+    senderData?: {
+    chatId?: string,
+      chatName: string,
+      chatType: string,
+      sender: string,
+      senderName?: string,
+    },
+    messageData?: {
+      typeMessage: string,
+      textMessageData?: {
+        textMessage: string,
+      }
+    }
+  }
+}

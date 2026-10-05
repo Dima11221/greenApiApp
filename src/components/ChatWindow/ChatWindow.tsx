@@ -1,6 +1,6 @@
 import type {ChatHistory, ChatMessage, Credentials} from "../../types/types.ts";
 import {useEffect, useState} from "react";
-import {GetChatHistory, SendMessage} from "../../api/api.ts";
+import {DeleteNotification, GetChatHistory, ReceiveNotification, SendMessage} from "../../api/api.ts";
 import styles from "./../ChatWindow/style.module.scss"
 import {Check} from "../../icons/Check.tsx";
 
@@ -29,6 +29,14 @@ const formatTime = (timestamp: number) => {
       minute: '2-digit'
     });
 }
+
+const INCOMING_TYPES = [
+  'incomingMessageReceived',
+  'outgoingMessageReceived',
+  'outgoingAPIMessageReceived',
+];
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -59,6 +67,49 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
     return () => {
       canceled = true;
     }
+  }, [credentials, chatId]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const {signal} = controller;
+
+    const poll = async () => {
+      while (!signal.aborted) {
+        try {
+          const n = await ReceiveNotification(credentials, signal);
+          if (!n) continue;
+
+          await DeleteNotification(credentials, n.receiptId);
+
+          const {body} = n;
+          if (!INCOMING_TYPES.includes(body.typeWebhook)) continue;
+          if (body.senderData?.chatId !== chatId) continue;
+
+          const text = body.messageData?.textMessageData?.textMessage;
+          if (!text || !body.idMessage) continue;
+
+          const msg: ChatMessage = {
+            id: body.idMessage,
+            chatId,
+            text,
+            own: body.typeWebhook !== 'incomingMessageReceived',
+            contactName: body.senderData?.senderName,
+            timestamp: body.timestamp ?? Math.floor(Date.now() / 1000),
+          }
+
+          setMessages((prev) => [...prev, msg]);
+
+        } catch (e) {
+          if (!signal.aborted) return;
+          console.error(e);
+          await sleep(2000);
+        }
+      }
+    }
+
+    poll();
+    return () => controller.abort();
+
   }, [credentials, chatId])
 
   const handleSubmitMessage = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -106,7 +157,6 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
       {error && <p>{error}</p>}
 
       <form onSubmit={handleSubmitMessage} className={styles.inputBar}>
-        {/*<label htmlFor="text"></label>*/}
         <input
           type="text"
           name="text"
