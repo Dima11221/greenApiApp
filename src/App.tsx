@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import './App.css';
 import type {Credentials} from "./types/types.ts";
-import Chat from "./components/Chat.tsx";
-import LoginForm from "./components/LoginForm.tsx";
+import Chat from "./components/Chat/Chat.tsx";
+import LoginForm from "./components/LoginForm/LoginForm.tsx";
 
 
 function App() {
@@ -11,9 +11,9 @@ function App() {
   if (!credentials) return <LoginForm onLogin={setCredentials} />
 
   return (
-    <main>
+    <div>
       <Chat credentials={credentials} />
-    </main>
+    </div>
   )
 }
 

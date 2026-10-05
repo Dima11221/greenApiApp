@@ -1,8 +1,10 @@
 import {useState} from "react";
 import * as React from "react";
-import {CheckAccount} from "../api/api.ts";
-import type {Credentials} from "../types/types.ts";
-import ChatWindow from "./ChatWindow.tsx";
+import {CheckAccount} from "../../api/api.ts";
+import type {Credentials} from "../../types/types.ts";
+import ChatWindow from "../ChatWindow/ChatWindow.tsx";
+import styles from "../Chat/style.module.scss"
+import {Check} from "../../icons/Check.tsx";
 
 
 interface IChatProps {
@@ -62,28 +64,26 @@ const Chat = ({credentials}: IChatProps) => {
 
   return (
     <>
-      <section>
-        <div>
-          <h1>Узнать, есть ли номер в MAX</h1>
-          <form onSubmit={handleSubmitNumber}>
-            <p>
-              <label htmlFor="phone">Введите номер телефона</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                required
-                placeholder="79991234567"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </p>
-            <button type="submit" disabled={loading}>
-              {loading ? "Проверка..." : "Проверить"}
+      <section className={styles.main}>
+        <form onSubmit={handleSubmitNumber} className={styles.formContainer}>
+          <div className={styles.flex}>
+            <label htmlFor="phone">Найти</label>
+            <input
+              className={styles.input}
+              type="tel"
+              id="phone"
+              name="phone"
+              required
+              placeholder="Номер телефона контакта"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+            <button type="submit" disabled={loading} className={styles.submit}>
+              <Check />
             </button>
-          </form>
-        </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+          </div>
+        </form>
+        {error && <p className={styles.error}>{error}</p>}
         {result && <p>{result}</p>}
 
         {chatId && <ChatWindow chatId={chatId} credentials={credentials} />}

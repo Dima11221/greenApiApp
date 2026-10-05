@@ -1,0 +1,117 @@
+$bubble-own: #e9fcff;
+$bubble-in: #ffffff;
+$time-own: #1f8fbf;
+$time-in: #9aa0a6;
+$blue: #0a7cff;
+
+.chat {
+  height: 100vh;
+  max-width: 580px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  overflow-y: auto;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 580px;
+}
+
+.message {
+  display: flow-root;
+  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 16px;
+  font-size: 16px;
+  line-height: 1.3;
+  color: #000;
+  word-break: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+
+  p {
+    margin: 0;
+  }
+}
+
+.own {
+  align-self: flex-end;
+  background: $bubble-own;
+}
+
+.incoming {
+  align-self: flex-start;
+  background: $bubble-in;
+}
+
+.time {
+  float: right;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin: 6px 0 -2px 10px;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.own .time {
+  color: $time-own;
+}
+
+.incoming .time {
+  color: $time-in;
+}
+
+.inputBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 580px;
+  margin: 0 auto 16px;
+  padding: 0 16px;
+  width: calc(100% - 32px);
+  height: 52px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(20, 60, 120, 0.15);
+
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
+  }
+}
+
+.submit {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 22px;
+  color: #fff;
+  background: $blue;
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.2s;
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.submitChat svg {
+  transform: rotate(-90deg);
+}
+

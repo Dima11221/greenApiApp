@@ -1,7 +1,8 @@
-
-import type {ChatHistory, ChatMessage, Credentials} from "../types/types.ts";
+import type {ChatHistory, ChatMessage, Credentials} from "../../types/types.ts";
 import {useEffect, useState} from "react";
-import {GetChatHistory, SendMessage} from "../api/api.ts";
+import {GetChatHistory, SendMessage} from "../../api/api.ts";
+import styles from "./../ChatWindow/style.module.scss"
+import {Check} from "../../icons/Check.tsx";
 
 interface IChatWindowProps {
   chatId: string;
@@ -19,6 +20,14 @@ const mapChatHistory = (data: ChatHistory[]): ChatMessage[] => {
   }))
     .filter((i) => i.text)
     .sort((a, b) => a.timestamp - b.timestamp)
+}
+
+const formatTime = (timestamp: number) => {
+  return new Date(timestamp * 1000).toLocaleTimeString('ru-RU',
+    {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
 }
 
 const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
@@ -80,43 +89,41 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
   };
 
   return (
-    <div>
-      <h1>ЧАТ</h1>
-
-      <div>
+    <div className={styles.chat}>
+      <div className={styles.main}>
         {loading && <p>Загрузка...</p>}
         {!loading && messages.length === 0 && <p>Нет сообщений</p>}
         {messages.map((message) => (
-          <div key={message.id}>
-            <p>{message.own ? 'Я' : message.contactName}</p>
-            <p>{message.text}</p>
+          <div key={message.id} className={`${styles.message} ${message.own ? styles.own : styles.incoming}`}>
+            {/*<p>{message.own ? 'Я' : message.contactName}</p>*/}
+            <span>{message.text}</span>
+            <span className={styles.time}>
+              {formatTime(message.timestamp)}
+            </span>
           </div>
         ))}
       </div>
       {error && <p>{error}</p>}
 
-      <section>
-        <div>
-          <h1>Окно отправки сообщения</h1>
-          <form onSubmit={handleSubmitMessage}>
-            <p>
-              <label htmlFor="text">Введите текст сообщения</label>
-              <input
-                type="text"
-                name="text"
-                id="text"
-                value={message}
-                placeholder="Привет"
-                required
-                onChange={(e) => setMessage(e.target.value)}
-              />
-            </p>
-            <button type="submit">Отправить сообщение</button>
-          </form>
-        </div>
-      </section>
+      <form onSubmit={handleSubmitMessage} className={styles.inputBar}>
+        {/*<label htmlFor="text"></label>*/}
+        <input
+          type="text"
+          name="text"
+          id="text"
+          value={message}
+          placeholder="Сообщение"
+          required
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button type="submit" className={`${styles.submit} ${styles.submitChat}`}>
+          <Check />
+        </button>
+      </form>
     </div>
   )
 };
 
 export default ChatWindow;
+
+
