@@ -53,7 +53,6 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
 
     GetChatHistory(credentials, chatId)
       .then((data) => {
-        console.log('data', data);
         if (!canceled) setMessages(mapChatHistory(data));
       })
       .catch((e) => {
@@ -132,7 +131,6 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
           timestamp: Math.floor(Date.now() / 1000),
         }]);
       setMessage('');
-      console.log(data);
     } catch (e) {
       console.error(e);
       setError('Не удалось отправить сообщение')

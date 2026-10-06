@@ -28,7 +28,6 @@ const LoginForm = ({onLogin}: ILoginFormProps) => {
     };
     try {
       const data = await GetStateInstance(credentials);
-      console.log(data);
       if (data.stateInstance !== 'authorized') {
         setError(`Инстанс не авторизован (Статус: ${data.stateInstance})`);
         return;
