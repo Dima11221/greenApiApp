@@ -48,7 +48,7 @@ const Chat = ({credentials}: IChatProps) => {
       }
       setChatId(data?.chatId || '');
 
-      setLoading(false);
+
     } catch (e) {
       console.error(e);
       setError('Ошибка при запросе');

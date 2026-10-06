@@ -38,10 +38,6 @@ const INCOMING_TYPES = [
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// const appendUnique = (prev: ChatMessage[], newMessage: ChatMessage): ChatMessage[] => {
-//   return prev.some((i) => i.id === newMessage.id) ? prev : [...prev, newMessage];
-// }
-
 const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
@@ -156,7 +152,6 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
           <div
             key={message.id}
             className={`${styles.message} ${message.own ? styles.own : styles.incoming}`}
-            ref={bottomRef}
           >
             <span>{message.text}</span>
             <span className={styles.time}>
@@ -164,6 +159,7 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
             </span>
           </div>
         ))}
+        <div ref={bottomRef}></div>
       </div>
       {error && <p className={styles.error}>{error}</p>}
 
