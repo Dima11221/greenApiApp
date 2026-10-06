@@ -1,75 +1,70 @@
-# React + TypeScript + Vite
+# GREEN-API Chat
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Тестовое задание GREEN-API (Frontend, React): веб-интерфейс чата для отправки и получения текстовых сообщений в MAX через [GREEN-API](https://green-api.com).
 
-Currently, two official plugins are available:
+- Демо: _ссылка на деплой_
+- Видео работы: _ссылка на видео_
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Возможности
 
-## React Compiler
+- Вход по `idInstance` и `apiTokenInstance` с проверкой статуса инстанса (`getStateInstance`)
+- Поиск контакта по номеру телефона с проверкой, что номер есть в MAX (`checkAccount`)
+- Загрузка истории переписки (`getChatHistory`)
+- Отправка текстовых сообщений (`sendMessage`)
+- Получение новых сообщений в реальном времени через опрос уведомлений (`receiveNotification` / `deleteNotification`)
+- Автопрокрутка к последнему сообщению
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Стек
 
-## Expanding the ESLint configuration
+React, TypeScript, Vite, SCSS Modules
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Запуск локально
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+cp .env.example .env
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+В `.env` укажите адрес API:
 
 ```
+VITE_API_URL=https://api.green-api.com
+```
+
+Адрес без слэша в конце. Актуальный URL для вашего инстанса указан в личном кабинете GREEN-API.
+
+Сборка для продакшена:
+
+```bash
+npm run build
+npm run preview
+```
+
+## Как пользоваться
+
+1. Зарегистрируйтесь в GREEN-API, создайте инстанс и авторизуйте в нём аккаунт MAX.
+2. Включите в настройках инстанса уведомления о входящих и исходящих сообщениях.
+3. Откройте приложение и введите `idInstance` и `apiTokenInstance` из личного кабинета.
+4. Введите номер телефона контакта в международном формате (например, `79001234567`).
+5. Пишите сообщения: история загрузится сама, новые ответы будут появляться в чате.
+
+## Структура
+
+```
+src/
+  api/         # запросы к GREEN-API
+  components/
+    LoginForm/ # вход по данным инстанса
+    Chat/      # поиск контакта по номеру
+    ChatWindow/# история, отправка и получение сообщений
+  types/       # общие типы
+  config.ts    # адрес API из переменных окружения
+```
+
+## Особенности и ограничения
+
+- Данные инстанса хранятся только в состоянии приложения и нигде не сохраняются: после перезагрузки страницы нужно войти заново.
+- Приложение работает напрямую с API из браузера, отдельного бэкенда нет.
+- Входящие уведомления приходят из общей очереди инстанса. Уведомления по другим чатам при опросе удаляются, поэтому приложение рассчитано на работу с одним открытым диалогом.
+- Лимиты GREEN-API на число запросов зависят от тарифа. Опрос уведомлений расходует их постоянно, пока открыт чат.
