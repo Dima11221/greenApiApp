@@ -1,5 +1,5 @@
 import type {ChatHistory, ChatMessage, Credentials} from "../../types/types.ts";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {DeleteNotification, GetChatHistory, ReceiveNotification, SendMessage} from "../../api/api.ts";
 import styles from "./../ChatWindow/style.module.scss"
 import {Check} from "../../icons/Check.tsx";
@@ -48,6 +48,12 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+  }, [messages]);
 
   useEffect(() => {
     let canceled = false;
@@ -147,8 +153,11 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
         {loading && <p>Загрузка...</p>}
         {!loading && messages.length === 0 && <p>Нет сообщений</p>}
         {messages.map((message) => (
-          <div key={message.id} className={`${styles.message} ${message.own ? styles.own : styles.incoming}`}>
-            {/*<p>{message.own ? 'Я' : message.contactName}</p>*/}
+          <div
+            key={message.id}
+            className={`${styles.message} ${message.own ? styles.own : styles.incoming}`}
+            ref={bottomRef}
+          >
             <span>{message.text}</span>
             <span className={styles.time}>
               {formatTime(message.timestamp)}
@@ -156,7 +165,7 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
           </div>
         ))}
       </div>
-      {error && <p>{error}</p>}
+      {error && <p className={styles.error}>{error}</p>}
 
       <form onSubmit={handleSubmitMessage} className={styles.inputBar}>
         <input
