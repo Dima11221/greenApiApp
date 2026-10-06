@@ -38,6 +38,10 @@ const INCOMING_TYPES = [
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// const appendUnique = (prev: ChatMessage[], newMessage: ChatMessage): ChatMessage[] => {
+//   return prev.some((i) => i.id === newMessage.id) ? prev : [...prev, newMessage];
+// }
+
 const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
@@ -96,10 +100,10 @@ const ChatWindow = ({chatId, credentials}: IChatWindowProps) => {
             timestamp: body.timestamp ?? Math.floor(Date.now() / 1000),
           }
 
-          setMessages((prev) => [...prev, msg]);
+          setMessages((prev) => prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]);
 
         } catch (e) {
-          if (!signal.aborted) return;
+          if (signal.aborted) return;
           console.error(e);
           await sleep(2000);
         }

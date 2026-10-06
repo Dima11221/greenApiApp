@@ -18,20 +18,18 @@ const normalizePhone = (value: string) => {
 const validatePhone = (value: string): string | null => {
   if (!value) return 'Введите номер телефона';
   if (value.startsWith('0')) return 'Номер должен начинаться с кода страны';
-  if (value.length < 11 ) return 'Длина номер должна быть 11 цифр';
+  if (value.length < 11 ) return 'Длина номер должна составлять 11 цифр';
   return null
 }
 
 const Chat = ({credentials}: IChatProps) => {
   const [phone, setPhone] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [chatId, setChatId] = useState<string>('');
 
   const handleSubmitNumber = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setResult(null);
     setChatId('');
     setError(null);
 
@@ -43,14 +41,12 @@ const Chat = ({credentials}: IChatProps) => {
     }
     setLoading(true);
     try {
-
-      //!!!
-      // const data = await CheckAccount(credentials, Number(value));
-      // setResult(data?.exist ? "Номер есть в MAX" : "Номера нет в MAX");
-      // setChatId(data?.chatId || '');
-
-      setChatId('220726370');
-
+      const data = await CheckAccount(credentials, Number(value));
+      if (!data?.exist) {
+        setError('Номера нет в MAX');
+        return;
+      }
+      setChatId(data?.chatId || '');
 
       setLoading(false);
     } catch (e) {
@@ -84,7 +80,6 @@ const Chat = ({credentials}: IChatProps) => {
           </div>
         </form>
         {error && <p className={styles.error}>{error}</p>}
-        {result && <p>{result}</p>}
 
         {chatId && <ChatWindow chatId={chatId} credentials={credentials} />}
 
